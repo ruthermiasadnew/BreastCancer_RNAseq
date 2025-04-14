@@ -3,7 +3,13 @@ Pipeline for identifying differentially expressed Genes using RNA seq data from 
 
 --------
 ## RESEARCH QUESTION : Which genes are differentially expressed across different breast cancer subtypes, and what biological pathways are enriched among the top differentially expressed genes?
+### Questions for DR.O 
+1. Graphs - I dont know how to interpret the plots biologically.. Its a PCA plot yes but what does that mean when they are clustered for HERE2 and BASAL
+2. Biological pathways - I've uploaded what I've got from cytosope when I first run it.. but then again how do I look at it, also It wasn't lettinf me add node tables I just used STRING
+3. End goal - I do Understand that I am looking for DEgenes across my subtypes but I keep on running to errors when I do it across all.
+4. I want to better understand the bio behind all this... this seems cool. but where do I start..
 
+### PROGRESS
 ---------
 ## Data 
 The dataset, GSE113863, is from NCBI's GEO database and it includes sample-level subtype classification based on the PAM50 gene. 
