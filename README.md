@@ -49,18 +49,13 @@ this is the dictionary that salmon will use to compare my RNA reads and try to f
 This was a very large file 3GB so I couldn't download it and use it on my computer R studio so I used the ineractive R studio on Anvil.
 on R I used tximport to change the transcript level data into gene level counts
     quick recap.. a gene is A section of DNA that codes for a protein
-                  Transcript is one of the many versions of that gene — depending on how it’s spliced
-    Analogy.. Beyonces songs..
-    Formation is one song
-      but it has the studio version, superbowl and remix..
-    so if I use salmon for her songs it gives me stream counts for each.. that is my transcripts but the when I use tximport its like Formation and the sum of all its streams
-    I found out that this is done because DE tools expect one value per gene
-    SO after I did my tximport and got my matrix with gene names samples and expression values
+                  Transcript is one of the many versions of that gene — depending on how it’s spliced.
+    after I did my tximport and got my matrix with gene names samples and expression values
 
-At first I wanted to do DESeq2 but fr some reason Biocmanager wouldn't let me load the library on Anvil so I did Limma instead
-Took gene count matrix + metadata (sample subtypes)
-		then Compared groups HER2E vs Basal
-	then I got logFC, p-values, and adj.p.values 
+At first I wanted to do DESeq2 but for some reason Biocmanager wouldn't let me load the library on Anvil so I did Limma instead.
+	-Took gene count matrix + metadata (sample subtypes).
+	-then Compared groups HER2E vs Basal.
+	-then I got logFC, p-values, and adj.p.values.
 I got my DEG for HER2E vs Basal
 I did PCA lots for the interaction(2D and 3D) didnt interpret it yet 
 then I exported DEG csv and used it n Cytoscope with STRING protien interaction and got a network graph. currently I am trying to better understand the netwokrs and the bilogical backgrounds 
