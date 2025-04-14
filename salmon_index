@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Load salmon module (via biocontainers)
+module load biocontainers
+module load salmon/1.10.1--hf7947b0_0
+
+# Build salmon index
+salmon index -t gencode.v44.transcripts.fa \
+             -i /anvil/scratch/x-radnew/salmon_index \
+             --threads 8 --gencode
