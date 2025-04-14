@@ -46,11 +46,12 @@ this is the dictionary that salmon will use to compare my RNA reads and try to f
       then it figures out which  transcripts are likely present in each sample, and how much of each
       It didn't run smoothly.. I had trouble doing the quantification from the right directory.
       When it finaaly worked I selected the .quant.sf files(the count table for how much each transcript was expressed) for each sample and made a folder on Anvil.
+
 This was a very large file 3GB so I couldn't download it and use it on my computer R studio so I used the ineractive R studio on Anvil.
 on R I used tximport to change the transcript level data into gene level counts
-    quick recap.. a gene is A section of DNA that codes for a protein
-                  Transcript is one of the many versions of that gene — depending on how it’s spliced.
-    after I did my tximport and got my matrix with gene names samples and expression values
+quick recap - a gene is A section of DNA that codes for a protein
+            - Transcript is one of the many versions of that gene — depending on how it’s spliced.
+after I did my tximport and got my matrix with gene names samples and expression values. 
 
 At first I wanted to do DESeq2 but for some reason Biocmanager wouldn't let me load the library on Anvil so I did Limma instead.
 	-Took gene count matrix + metadata (sample subtypes).
