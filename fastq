@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Load fastp module
+module load biocontainers
+module load fastp/0.20.1--h7c3e1b0_0
+
+# Create output folder
+mkdir -p trimmed_fastqs
+
+# Run fastp on all fastq files
+for fq in *.fastq
+do
+  base=$(basename $fq .fastq)
+  fastp -i $fq -o trimmed_fastqs/${base}.trimmed.fastq \
+        --detect_adapter_for_pe \
+        -h trimmed_fastqs/${base}_report.html \
+        -j trimmed_fastqs/${base}_report.json
+done
