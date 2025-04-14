@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Load salmon module
+module load biocontainers
+module load salmon/1.10.1--hf7947b0_0
+
+# Create output folder
+mkdir -p salmon_quant
+
+# Quantify expression for each sample
+for fq in trimmed_fastqs/*.trimmed.fastq
+do
+  base=$(basename $fq .trimmed.fastq)
+  salmon quant -i /anvil/scratch/x-radnew/salmon_index \
+               -l A \
+               -r $fq \
+               -o salmon_quant/$base \
+               --threads 8
+done
