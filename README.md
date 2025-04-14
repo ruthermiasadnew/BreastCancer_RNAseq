@@ -16,7 +16,8 @@ Since I couldn’t find a better raw count matrix, I decided to download the FAS
 I uploaded the FASTQ files to AnVIL, inside my scratch directory:
 /anvil/scratch/x-radnew/breast_cancer_fastq
 -----------
-QC and Trimming 
+QC and Trimming
+
 	I first tried using FastQC, but realized it runs on all files individually so I used **MultiQC** to summarize everything in one place.
 	The initial quality wasn’t great.
 	I trimmed the reads using **fastp** to remove adapters and low-quality tails, then re-ran **MultiQC**. The quality looked a lot better after trimming.
