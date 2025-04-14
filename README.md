@@ -12,10 +12,10 @@ At first, I tried using the **raw count matrix** available on GEO. I was plannin
 - Create metadata  
 - Run DESeq2 for differential expression  
 
-But that matrix only had **225 samples**, while I had 474. It technically worked, but the data was sparse and didn’t match well, probably because the original study’s goal was different from mine.
+But that matrix only had 225 samples, while I had 474. It technically worked, but the data was sparse and didn’t match well, probably because the original study’s goal was different from mine.
 Since I couldn’t find a better raw count matrix, I decided to download the FASTQ files myself and build my own RNA-seq pipeline.
-I uploaded the FASTQ files to **AnVIL**, inside my scratch directory:  
-`/anvil/scratch/x-radnew/breast_cancer_fastq`
+I uploaded the FASTQ files to AnVIL, inside my scratch directory:
+/anvil/scratch/x-radnew/breast_cancer_fastq
 -----------
 ## QC and Trimming 
 
