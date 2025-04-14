@@ -1,0 +1,250 @@
+---
+title: "tximoort"
+output: html_document
+date: '2025-04-13'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+setwd("/anvil/scratch/x-radnew")
+```
+
+
+```{r}
+samples <- read.csv("samples.csv")
+```
+
+
+```{r}
+samples$files <- file.path("all_quants", paste0(samples$Run, "_quant.sf"))
+files <- samples$files
+names(files) <- samples$Run
+```
+
+
+```{r}
+table(file.exists(files))
+```
+
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("tximport")
+library(tximport)
+txi <- tximport(files, type = "salmon", txOut = TRUE)
+# SAVE IT ASAP
+saveRDS(txi, file = "~/txi_backup.rds")
+```
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("DESeq2")
+```
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager", lib = "/home/x-radnew/R/x86_64-pc-linux-gnu-library/4.0")
+
+BiocManager::install("DESeq2", lib = "/home/x-radnew/R/x86_64-pc-linux-gnu-library/4.0", dependencies = TRUE)
+```
+
+```{r}
+BiocManager::install("DESeq2", lib = "/home/x-radnew/R/x86_64-pc-linux-gnu-library/4.0", 
+                     dependencies = TRUE, ask = FALSE, 
+                     build_vignettes = FALSE, INSTALL_opts = "--no-multiarch")
+```
+
+```{r}
+install.packages(DESeq2)
+library(DESeq2)
+dds <- DESeqDataSetFromTximport(txi, colData = samples, design = ~ Subtype)
+dds <- DESeq()
+res <- results(dds)
+```
+
+
+```{r}
+.libPaths("/home/x-radnew/R/x86_64-pc-linux-gnu-library/4.0")
+
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager", lib = .libPaths()[1], repos = "https://cran.rstudio.com/")
+}
+
+BiocManager::install("edgeR", lib = .libPaths()[1], dependencies = TRUE, ask = FALSE)
+```
+
+
+```{r}
+ list.files("/home/x-radnew/R/x86_64-pc-linux-gnu-library/4.0")
+```
+
+
+```{r}
+library(limma)
+#library(edgeR) # optional but lightweight — you might have it now since limma is there
+```
+
+
+```{r}
+
+
+counts <- txi$counts  # from tximport
+group <- factor(samples$Subtype)  # your subtypes like Basal, HER2E, etc.
+
+# Build design matrix
+design <- model.matrix(~ 0 + group)  # No intercept, makes coefficients per group
+colnames(design) <- levels(group)
+```
+
+filtering out low count genes 
+
+```{r}
+keep <- rowSums(counts > 5) >= 3
+counts_filtered <- counts[keep, ]
+```
+
+
+```{r}
+v <- voom(counts_filtered, design, plot = TRUE)  # Will generate voom plot
+fit <- lmFit(v, design)
+```
+
+
+```{r}
+topTable(fit2, coef = "HER2EvsBasal", number = 10)  # Preview top 10
+res <- topTable(fit2, coef = "HER2EvsBasal", number = Inf)
+res_sig <- res[res$adj.P.Val < 0.05 & abs(res$logFC) > 1, ]
+```
+
+
+```{r}
+# Define contrast
+contrast.matrix <- makeContrasts(HER2EvsBasal = HER2E - Basal, levels = design)
+
+fit2 <- contrasts.fit(fit, contrast.matrix)
+fit2 <- eBayes(fit2)
+```
+
+
+```{r}
+topTable(fit2, coef = "HER2EvsBasal", number = 10)  # Preview top 10
+res <- topTable(fit2, coef = "HER2EvsBasal", number = Inf)
+res_sig <- res[res$adj.P.Val < 0.05 & abs(res$logFC) > 1, ]
+```
+
+
+```{r}
+write.csv(res_sig, "limma_DEGs_HER2E_vs_Basal.csv")
+```
+
+
+```{r}
+save.image(file = "~/breast_cancer_project.RData")
+```
+
+
+```{r}
+# Subset to HER2E and Basal only
+selected_samples <- samples$Subtype %in% c("HER2E", "Basal")
+log_tpm <- log2(txi$abundance + 1)
+log_tpm_sub <- log_tpm[, selected_samples]
+
+# Update metadata to match
+sample_meta_sub <- samples[selected_samples, ]
+```
+
+
+```{r}
+# Remove genes with zero variance across the selected samples
+log_tpm_sub_filtered <- log_tpm_sub[apply(log_tpm_sub, 1, var) > 0, ]
+pca <- prcomp(t(log_tpm_sub_filtered), scale. = TRUE)
+```
+
+
+```{r}
+subtype_colors <- as.factor(sample_meta_sub$Subtype)
+palette_colors <- c("red", "blue")
+
+plot(pca$x[,1], pca$x[,2],
+     col = palette_colors[subtype_colors],
+     pch = 19,
+     xlab = paste0("PC1 (", round(summary(pca)$importance[2,1] * 100, 1), "%)"),
+     ylab = paste0("PC2 (", round(summary(pca)$importance[2,2] * 100, 1), "%)"),
+     main = "PCA of HER2E vs Basal Samples")
+legend("topright", legend = levels(subtype_colors),
+       col = palette_colors, pch = 19)
+```
+
+
+```{r}
+install.packages("plotly")
+library(plotly)
+
+```
+
+```{r}
+p <- plot_ly(
+  x = ~pca$x[,1],
+  y = ~pca$x[,2],
+  z = ~pca$x[,3],
+  color = sample_meta_sub$Subtype,
+  colors = c("red", "blue"),
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 4)
+) %>%
+  layout(title = "3D PCA of HER2E vs Basal",
+         scene = list(
+           xaxis = list(title = "PC1"),
+           yaxis = list(title = "PC2"),
+           zaxis = list(title = "PC3")
+         ))
+
+p
+```
+
+
+```{r}
+head(rownames(res_sig))
+```
+
+
+```{r}
+res_export <- res_sig[, c("logFC", "P.Value", "adj.P.Val")]
+res_export$gene_id <- rownames(res_sig)
+
+# Move gene_id to front
+res_export <- res_export[, c("gene_id", "logFC", "P.Value", "adj.P.Val")]
+
+# Save as CSV
+write.csv(res_export, "DEGs_HER2E_vs_Basal_for_Cytoscape.csv", row.names = FALSE)
+```
+
+```{r}
+res_export$symbol <- sapply(strsplit(res_export$gene_id, "\\|"), `[`, 6)
+```
+
+
+```{r}
+write.csv(res_export, "DEGs_with_symbols.csv", row.names = FALSE)
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
