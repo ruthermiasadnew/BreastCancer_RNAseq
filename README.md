@@ -31,7 +31,7 @@ QC and Trimming
 ## Alignment & Quantification with Salmon
 
 This one was challenging because I didn't know whcih alignment tool to use that would best fit my end goal and the data I was working with. 
-I chose salmon because, it is super fast compared to HISAT or STAR.. and It's my first time :0
+I chose salmon because, it is super fast compared to HISAT or STAR.
 -------SALMON QUANTIFICATION ------
 1. Downloaded Transcriptome Reference (GENCODE)
    wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.transcripts.fa.gz
