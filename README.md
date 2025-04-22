@@ -1,65 +1,111 @@
-# BreastCancer_RNAseq
-Pipeline for identifying differentially expressed Genes using RNA seq data from 6 different Breast cancer Subtypes
+BreastCancer_RNAseq
 
---------
-## RESEARCH QUESTION : Which genes are differentially expressed across different breast cancer subtypes, and what biological pathways are enriched among the top differentially expressed genes?
-### Questions for DR.O 
-1. I created the PCA plots (2D + 3D) and saw that HER2E and Basal samples clustered apart, but what does that actually mean biologically? What’s the takeaway when subtypes cluster like that?
-2. Biological pathways - I've uploaded what I've got from cytosope when I first run it.. but then again how do I look at it, also It wasn't letting me add node tables I just used STRING
-3. End goal - I do Understand that I am looking for DEgenes across my subtypes but I keep on running to errors when I do it across all.
-   
+Pipeline for identifying differentially expressed genes using RNA-seq data from six different breast cancer subtypes.
 
-### PROGRESS
----------
-## Data 
-The dataset, GSE113863, is from NCBI's GEO database and it includes sample-level subtype classification based on the PAM50 gene. 
-At first, I tried using the **raw count matrix** available on GEO. I was planning to:
-- Load it into R  
-- Create metadata  
-- Run DESeq2 for differential expression  
-But that matrix only had 225 samples, while I had 474. It technically worked, but the data was sparse and didn’t match well, probably because the original study’s goal was different from mine.
-Since I couldn’t find a better raw count matrix, I decided to download the FASTQ files myself and build my own RNA-seq pipeline.
-I uploaded the FASTQ files to AnVIL, inside my scratch directory:
-/anvil/scratch/x-radnew/breast_cancer_fastq
------------
-QC and Trimming
+🎯 Research Question
 
-	I first tried using FastQC, but realized it runs on all files individually so I used **MultiQC** to summarize everything in one place.
-	The initial quality wasn’t great.
-	I trimmed the reads using **fastp** to remove adapters and low-quality tails, then re-ran **MultiQC**. The quality looked a lot better after trimming.
------------
-## Alignment & Quantification with Salmon
+Which genes are differentially expressed across different breast cancer subtypes, and what biological pathways are enriched among the top differentially expressed genes?
 
-This one was challenging because I didn't know whcih alignment tool to use that would best fit my end goal and the data I was working with. 
-I chose salmon because, it is super fast compared to HISAT or STAR.
--------SALMON QUANTIFICATION ------
-1. Downloaded Transcriptome Reference (GENCODE)
-   wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.transcripts.fa.gz
-   gunzip gencode.v44.transcripts.fa.gz
-this is the dictionary that salmon will use to compare my RNA reads and try to figure out which ones are being expressed
+🧪 Progress Overview
 
-2. Built a Salmon Index
-     salmon index -t gencode.v44.transcripts.fa -i /anvil/scratch/x-radnew/salmon_index --threads 8
-     this is like a cheat sheet instead of letting SALMON scan the full FASTA file everytime it can look up on the indeex to see where the read might belong
-3. Quantified Expression for Each Sample
-      for this part SALMON is taking each of the trimmed fastq files and Tries to “quasi-align” them to transcripts from GENCODE (using k-mers, not full alignment)
-      then it figures out which  transcripts are likely present in each sample, and how much of each
-      It didn't run smoothly.. I had trouble doing the quantification from the right directory.
-      When it finaaly worked I selected the .quant.sf files(the count table for how much each transcript was expressed) for each sample and made a folder on Anvil.
+📦 Data Source
 
-This was a very large file 3GB so I couldn't download it and use it on my computer R studio so I used the ineractive R studio on Anvil.
-on R I used tximport to change the transcript level data into gene level counts
-quick recap - a gene is A section of DNA that codes for a protein
-            - Transcript is one of the many versions of that gene — depending on how it’s spliced.
-after I did my tximport and got my matrix with gene names samples and expression values. 
+Dataset: GSE113863 from NCBI's GEO
 
-At first I wanted to do DESeq2 but for some reason Biocmanager wouldn't let me load the library on Anvil so I did Limma instead.
-	-Took gene count matrix + metadata (sample subtypes).
-	-then Compared groups HER2E vs Basal.
-	-then I got logFC, p-values, and adj.p.values.
-I got my DEG for HER2E vs Basal
-I did PCA lots for the interaction(2D and 3D) didnt interpret it yet 
-then I exported DEG csv and used it n Cytoscope with STRING protien interaction and got a network graph. currently I am trying to better understand the netwokrs and the bilogical backgrounds 
+Includes PAM50 breast cancer subtypes (e.g., HER2E, Basal)
+
+Initial raw count matrix (225 samples) didn’t align with downloaded FASTQ files (474 samples)
+
+Solution: Downloaded full FASTQ files and created RNA-seq pipeline from scratch via AnVIL
+
+🔬 RNA-seq Analysis Pipeline
+
+🧼 Quality Control & Trimming
+
+Used FastQC for initial QC
+
+Summarized with MultiQC
+
+Trimmed adapters and low-quality reads using fastp
+
+Re-ran MultiQC post-trimming → much better quality
+
+🎯 Alignment & Quantification with Salmon
+
+Downloaded GENCODE Transcriptome Reference
+
+wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.transcripts.fa.gz
+gunzip gencode.v44.transcripts.fa.gz
+
+Built Salmon Index
+
+salmon index -t gencode.v44.transcripts.fa -i /anvil/scratch/x-radnew/salmon_index --threads 8
+
+Quantified Expression for Each Sample
+
+Salmon quasi-aligned trimmed FASTQ files to the index
+
+Extracted .quant.sf files for each sample (transcript-level expression counts)
+
+tximport
+
+Used tximport in R to summarize transcript-level data to gene-level expression counts
+
+📊 Differential Expression Analysis
+
+🔁 DE Analysis
+
+Used limma instead of DESeq2 due to BiocManager install issues
+
+Created metadata (sample subtype classification)
+
+Compared HER2E vs Basal
+
+Output: logFC, p-values, and adjusted p-values
+
+📌 Key Findings
+
+Identified top differentially expressed genes (DEGs) in HER2E vs Basal
+
+Exported DEGs to CSV for network visualization
+
+🌐 Visualization
+
+🔵 PCA
+
+Created 2D and 3D PCA plots
+
+HER2E and Basal clustered apart → suggests biological differences
+
+🧬 Cytoscape + STRING
+
+Imported DEGs into Cytoscape with STRING database
+
+Visualized protein-protein interaction networks
+
+Currently exploring how to interpret clusters and enriched biological pathways
+
+❓Questions for Dr. O
+
+What does the clustering of HER2E and Basal in PCA indicate biologically?
+
+How can I better interpret Cytoscape/STRING networks?
+
+What's the best way to conduct DEG analysis across all six subtypes without running into metadata issues?
+
+🚧 Challenges
+
+BiocManager not loading DESeq2 on AnVIL
+
+Large data files (3GB+) were difficult to transfer
+
+Metadata matching and subtype consistency required manual validation
+
+🧠 Reflection
+
+This project helped me build end-to-end RNA-seq analysis skills, from raw data to biological interpretation. I’ve grown significantly in pipeline development, cloud computing, and bioinformatics visualization—and I’m excited to expand on this as I deepen my understanding of cancer genomics.
+
+
 
     
 
