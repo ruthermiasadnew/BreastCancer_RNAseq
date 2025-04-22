@@ -2,13 +2,11 @@ BreastCancer_RNAseq
 
 Pipeline for identifying differentially expressed genes using RNA-seq data from six different breast cancer subtypes.
 
-🎯 Research Question
-
+Research Question
 Which genes are differentially expressed across different breast cancer subtypes, and what biological pathways are enriched among the top differentially expressed genes?
 
-🧪 Progress Overview
 
-📦 Data Source
+Data Source
 
 Dataset: GSE113863 from NCBI's GEO
 
@@ -20,7 +18,7 @@ Solution: Downloaded full FASTQ files and created RNA-seq pipeline from scratch 
 
 🔬 RNA-seq Analysis Pipeline
 
-🧼 Quality Control & Trimming
+ Quality Control & Trimming
 
 Used FastQC for initial QC
 
@@ -30,7 +28,7 @@ Trimmed adapters and low-quality reads using fastp
 
 Re-ran MultiQC post-trimming → much better quality
 
-🎯 Alignment & Quantification with Salmon
+Alignment & Quantification with Salmon
 
 Downloaded GENCODE Transcriptome Reference
 
@@ -51,9 +49,9 @@ tximport
 
 Used tximport in R to summarize transcript-level data to gene-level expression counts
 
-📊 Differential Expression Analysis
+ Differential Expression Analysis
 
-🔁 DE Analysis
+ DE Analysis
 
 Used limma instead of DESeq2 due to BiocManager install issues
 
@@ -63,21 +61,21 @@ Compared HER2E vs Basal
 
 Output: logFC, p-values, and adjusted p-values
 
-📌 Key Findings
+ Key Findings
 
 Identified top differentially expressed genes (DEGs) in HER2E vs Basal
 
 Exported DEGs to CSV for network visualization
 
-🌐 Visualization
+ Visualization
 
-🔵 PCA
+ PCA
 
 Created 2D and 3D PCA plots
 
 HER2E and Basal clustered apart → suggests biological differences
 
-🧬 Cytoscape + STRING
+ Cytoscape + STRING
 
 Imported DEGs into Cytoscape with STRING database
 
@@ -85,7 +83,7 @@ Visualized protein-protein interaction networks
 
 Currently exploring how to interpret clusters and enriched biological pathways
 
-❓Questions for Dr. O
+Questions for Dr. O
 
 What does the clustering of HER2E and Basal in PCA indicate biologically?
 
@@ -93,7 +91,7 @@ How can I better interpret Cytoscape/STRING networks?
 
 What's the best way to conduct DEG analysis across all six subtypes without running into metadata issues?
 
-🚧 Challenges
+ Challenges
 
 BiocManager not loading DESeq2 on AnVIL
 
