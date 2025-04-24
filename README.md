@@ -104,6 +104,12 @@ Metadata matching and subtype consistency required manual validation
 This project helped me build end-to-end RNA-seq analysis skills, from raw data to biological interpretation. I’ve grown significantly in pipeline development, cloud computing, and bioinformatics visualization—and I’m excited to expand on this as I deepen my understanding of cancer genomics.
 
 
+These are my top 6 differentially expressed genes based on my enrichment table from Cytoscape with low FDR values 
+
+ANLN, MELK, CENPF, KIF2C, CDC20, PTTG1
+
+
+
 
     
 
